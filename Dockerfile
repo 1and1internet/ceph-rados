@@ -3,7 +3,7 @@
 # CEPH VERSION DETAIL: 11.1.X
 
 FROM centos:7
-MAINTAINER Sébastien Han "seb@redhat.com"
+MAINTAINER James Wilkins <james.wilkins@fasthosts.co.uk>
 
 ENV ETCDCTL_VERSION v2.3.7
 ENV ETCDCTL_ARCH linux-amd64
@@ -19,7 +19,7 @@ RUN yum install -y unzip
 RUN rpm --import 'https://download.ceph.com/keys/release.asc'
 RUN rpm -Uvh http://download.ceph.com/rpm-${CEPH_VERSION}/el7/noarch/ceph-release-1-1.el7.noarch.rpm
 RUN yum install -y epel-release && yum clean all
-RUN yum install -y ceph ceph-radosgw rbd-mirror nfs-ganesha-rgw nfs-ganesha-vfs nfs-ganesha-ceph device-mapper && yum clean all
+RUN yum install -y ceph ceph-radosgw device-mapper && yum clean all
 
 # Install etcdctl
 RUN curl -L --remote-name https://github.com/coreos/etcd/releases/download/${ETCDCTL_VERSION}/etcd-${ETCDCTL_VERSION}-${ETCDCTL_ARCH}.tar.gz && tar xfz etcd-${ETCDCTL_VERSION}-${ETCDCTL_ARCH}.tar.gz -C /tmp/ etcd-${ETCDCTL_VERSION}-${ETCDCTL_ARCH}/etcdctl
@@ -50,7 +50,7 @@ ADD *.sh ceph.defaults check_zombie_mons.py ./osd_scenarios/* /
 # Add templates for confd
 ADD ./confd/templates/* /etc/confd/templates/
 ADD ./confd/conf.d/* /etc/confd/conf.d/
-RUN chmod 777 /var/lib/ceph
+RUN chmod -R 777 /var/lib/ceph
 
 # Add volumes for Ceph config and data
 VOLUME ["/etc/ceph","/var/lib/ceph", "/etc/ganesha"]
